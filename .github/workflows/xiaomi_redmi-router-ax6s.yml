@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lean]
+        target: [xiaomi_redmi-router-ax6s]
     
     steps:
     - name: 检查
