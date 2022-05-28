@@ -69,8 +69,8 @@ jobs:
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
-        sed -i '$a src-git immortalwrt_luci https://github.com/immortalwrt/luci' feeds.conf.default
-        sed -i '$a src-git immortalwrt_packages https://github.com/immortalwrt/packages' feeds.conf.default
+        sed -i 's/src-git packages https:\/\/github.com\/coolsnowwolf\/packages/src-git packages https:\/\/github.com\/jerbe\/openwrt_packages/g' feeds.conf.default
+        sed -i 's/src-git packages https:\/\/github.com\/coolsnowwolf\/luci/src-git packages https:\/\/github.com\/jerbe\/openwrt_luci/g' feeds.conf.default
 
     - name: 更新 & 安装 feeds
       working-directory: ./openwrt
