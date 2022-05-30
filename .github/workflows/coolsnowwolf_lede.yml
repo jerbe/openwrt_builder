@@ -149,6 +149,7 @@ jobs:
       with:
         files: "${{ env.FIRMWARE }}/*"
         name: ${{ env.date2 }} ${{matrix.target}}
+        tag_name: ${{ env.date }}_${{matrix.target}} ${{ github.ref }}
         body_path: release.txt
 
     - name: 删除工作流
@@ -158,7 +159,7 @@ jobs:
         keep_minimum_runs: 0
 
     - name: 删除旧版本
-      uses: dev-drprasad/delete-older-releases@v0.1.0
+      uses: dev-drprasad/delete-older-releases@master
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         keep_latest: 6
