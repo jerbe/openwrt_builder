@@ -96,6 +96,7 @@ jobs:
         find dl -size -1024c -exec rm -f {} \;
 
     - name: 编译固件
+      id: compile
       working-directory: ./openwrt
       run: |
         echo -e "$(($(nproc)+1)) thread compile"
@@ -108,14 +109,14 @@ jobs:
 
     - name: 上传bin目录
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true' && !cancelled()
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: openwrt/bin
 
     - name: 整理文件
       id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         mkdir firmware
         mv -f openwrt/bin/targets/*/*/{*combined*,*factory*,*sysupgrade*} ./firmware/ 2>/dev/null || true
@@ -131,13 +132,13 @@ jobs:
         echo ${{matrix.target}} >> version.txt
         rm -rf sha256sums
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
     - name: 生成发布标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         echo -e "发布成功\n" >> release.txt
-        echo -e "源码来源 https://github.com/coolsnowwolf/lede\n" >> release.txt
         touch release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
@@ -145,7 +146,7 @@ jobs:
 
     - name: 上传固件发布
       uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
+      if: steps.organize.outputs.status == 'success' && steps.tag.outputs.status == 'success' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       with:
