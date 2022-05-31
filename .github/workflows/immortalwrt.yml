@@ -83,7 +83,8 @@ jobs:
         CONFIG_FILE: '${{matrix.target}}.config'
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x ./customize.sh && ./customize.sh
+        cp ./diy/${{ matrix.target }}/immortalwrt.sh ./diy.sh
+        chmod +x ./diy.sh && ./diy.sh
         cp -f ./devices/${{matrix.target}}/immortalwrt.config openwrt/.config
         cd openwrt
         make defconfig
