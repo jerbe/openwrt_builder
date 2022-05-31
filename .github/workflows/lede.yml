@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: coolsnowwolf_lede
+name: lede
 
 on:
   repository_dispatch:
@@ -84,7 +84,7 @@ jobs:
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
-        cp -f ./devices/${{matrix.target}}/.config openwrt/.config
+        cp -f ./devices/${{matrix.target}}/lede.config openwrt/.config
         cd openwrt
         make defconfig
         
@@ -136,6 +136,7 @@ jobs:
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         echo -e "发布成功\n" >> release.txt
+        echo -e "源码来源 https://github.com/coolsnowwolf/lede\n" >> release.txt
         touch release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
@@ -148,8 +149,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       with:
         files: "${{ env.FIRMWARE }}/*"
-        name: ${{ env.date2 }} ${{matrix.target}}
-        tag_name: ${{ env.date }}_${{matrix.target}}
+        name: ${{ env.date2 }} ${{name}} ${{matrix.target}}
+        tag_name: ${{ env.date }}_${{name}}_${{matrix.target}}
         body_path: release.txt
 
     - name: 删除工作流
