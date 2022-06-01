@@ -114,6 +114,22 @@ jobs:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: openwrt/bin
 
+    - name: 推送到仓库
+      id: push2repo  
+      env: 
+        RELEASE_REPO: github.com/jerbe/openwrt_lede_release
+        REPO_BRANCH: master  
+      if: steps.compile.outputs.status == 'success' && !cancelled()
+      run: |
+        git clone --depth 1 https://${RELEASE_REPO}.git -b $REPO_BRANCH release
+        cd release
+        git rm -r --cache * >/dev/null 2>&1 &
+        rm -rf `ls * | egrep -v '(.git)' >/dev/null 2>&1
+        cp -rf ../openwrt/bin/* ./
+        git add .
+        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@${RELEASE_REPO}.git" HEAD:$REPO_BRANCH
+
     - name: 整理文件
       id: organize
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
