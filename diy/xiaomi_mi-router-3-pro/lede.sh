@@ -12,5 +12,5 @@ sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7615.2G.dat
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7615.5G.dat
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7615.dat
-sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7915.1.2Gdat
-sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7915.1.5Gdat
+sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7915.1.2G.dat
+sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7915.1.5G.dat
