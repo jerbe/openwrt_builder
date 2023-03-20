@@ -130,6 +130,8 @@ jobs:
 #        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
 #        git push --quiet "https://${{ secrets.REPO_TOKEN }}@${RELEASE_REPO}.git" HEAD:$REPO_BRANCH
 
+
+
     - name: 整理文件
       id: organize
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
