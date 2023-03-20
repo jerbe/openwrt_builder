@@ -155,18 +155,18 @@ jobs:
         tag_name: ${{ env.date }}_immortalwrt_${{matrix.target}}
         body_path: release.txt
 
-    - name: 删除工作流
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 0
-
-    - name: 删除旧版本
-      uses: dev-drprasad/delete-older-releases@master
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 6
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+#    - name: 删除工作流
+#      uses: GitRML/delete-workflow-runs@main
+#      with:
+#        retain_days: 1
+#        keep_minimum_runs: 0
+#
+#    - name: 删除旧版本
+#      uses: dev-drprasad/delete-older-releases@master
+#      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+#      with:
+#        keep_latest: 6
+#        delete_tags: true
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         
