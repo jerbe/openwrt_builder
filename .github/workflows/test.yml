@@ -41,9 +41,11 @@ jobs:
         sleep `echo $RANDOM|cut -c 1,1|awk '{print $0"s"}'`
     - name: 上传固件到artifact
       uses: actions/upload-artifact@v3
+      run: |
+        echo $PWD
       with:
         name: openwrt_release_firmware
-        path: ~/${{ matrix.target }}.txt
+        path: ./*.txt
         if-no-files-found: error
 
   release_openwrt:
