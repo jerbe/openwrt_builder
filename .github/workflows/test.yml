@@ -33,6 +33,7 @@ jobs:
       run: |
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.txt
         touch ${{ matrix.target }}.txt
+        ls -a
         sleep `echo $RANDOM|cut -c 1,1|awk '{print $0"s"}'`
     - name: 上传固件到artifact
       uses: actions/upload-artifact@v3
