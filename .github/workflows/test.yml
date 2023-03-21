@@ -29,19 +29,16 @@ jobs:
       matrix:
         target: [xiaomi_redmi-router-ax6s, xiaomi_mi-router-3-pro]
     steps:
-    - name: 检查
-      uses: actions/checkout@main
-
     - name: 初始化环境
       run: |
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.txt
         touch ${{ matrix.target }}.txt
-        sleep `echo $RANDOM|cut -c 1-2|awk '{print $0"s"}'`
+        sleep `echo $RANDOM|cut -c 1,1|awk '{print $0"s"}'`
     - name: 上传固件到artifact
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
-        path: ./{*.txt}
+        path: ~/*.txt
         if-no-files-found: error
 
   release_openwrt:
