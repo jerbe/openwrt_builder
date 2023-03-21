@@ -34,17 +34,20 @@ jobs:
 
     - name: 初始化环境
       run: |
-        echo "${{ matrix.target }}" >> ${{ matrix.target }}.txt
+        echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.txt
+        touch ${{ matrix.target }}.txt
         sleep `echo $RANDOM|cut -c 1-3|awk '{print $0"s"}'`
     - name: 上传固件到artifact
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
         path: ./{*.txt}
+        if-no-files-found: error
 
   release_openwrt:
     runs-on: Ubuntu-20.04
     needs: build_openwrt
+    if: ${{ success()}}
     steps:
     - name: 下载 Artifact
       uses: actions/download-artifact@v3
