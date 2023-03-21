@@ -45,7 +45,7 @@ jobs:
 
   release_openwrt:
     runs-on: Ubuntu-20.04
-    needs: [artifact-xiaomi_redmi-router-ax6s, artifact-xiaomi_mi-router-3-pro]
+    needs: build_openwrt
     steps:
     - name: 下载 Artifact
       uses: actions/download-artifact@v3
