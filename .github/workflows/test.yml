@@ -1,0 +1,61 @@
+#=================================================
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: kenzo
+#=================================================
+
+name: test
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+
+env:
+  UPLOAD_FIRMWARE: true
+  TZ: Asia/Shanghai
+
+jobs:
+  build_openwrt:
+    runs-on: Ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+    name: 编译 ${{matrix.target}} 
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [xiaomi_redmi-router-ax6s, xiaomi_mi-router-3-pro]
+    steps:
+    - name: 检查
+      uses: actions/checkout@main
+
+    - name: 初始化环境
+      run: |
+        echo "${{ matrix.target }}" >> ${{ matrix.target }}.txt
+        sleep `echo $RANDOM|cut -c 1-3|awk '{print $0"s"}'`
+    - name: 上传bin目录
+      uses: actions/upload-artifact@v3
+      with:
+        name: openwrt_release_firmware
+        path: openwrt/bin/targets/*/*/{*.txt}
+
+  release_openwrt:
+    runs-on: Ubuntu-20.04
+    needs: [xiaomi_redmi-router-ax6s, xiaomi_mi-router-3-pro]
+    steps:
+    - name: 下载 Artifact
+      uses: actions/download-artifact@v3
+      with:
+          name: openwrt_release_firmware
+          path: openwrt/firmware
+    - name: 发布Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: openwrt/firmware/*
+        name: 发布测试数据
+        body_path: release.txt
+
+        
