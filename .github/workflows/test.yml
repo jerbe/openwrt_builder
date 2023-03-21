@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
-        path: openwrt/bin/targets/*/*/{*.txt}
+        path: {*.txt}
 
   release_openwrt:
     runs-on: Ubuntu-20.04
