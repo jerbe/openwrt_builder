@@ -36,7 +36,8 @@ jobs:
       run: |
         echo "${{ matrix.target }}" >> ${{ matrix.target }}.txt
         sleep `echo $RANDOM|cut -c 1-3|awk '{print $0"s"}'`
-    - name: 上传bin目录
+    - name: 上传固件到artifact
+      id: artifact-${{matrix.target}}
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
@@ -44,7 +45,7 @@ jobs:
 
   release_openwrt:
     runs-on: Ubuntu-20.04
-    needs: [xiaomi_redmi-router-ax6s, xiaomi_mi-router-3-pro]
+    needs: [artifact-xiaomi_redmi-router-ax6s, artifact-xiaomi_mi-router-3-pro]
     steps:
     - name: 下载 Artifact
       uses: actions/download-artifact@v3
