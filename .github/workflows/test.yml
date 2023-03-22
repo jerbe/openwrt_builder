@@ -48,7 +48,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
-        path: ${{FIRMWARE}}
+        path: ${{env.FIRMWARE}}
         if-no-files-found: error
 
   release_openwrt:
