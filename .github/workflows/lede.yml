@@ -108,10 +108,7 @@ jobs:
         cp openwrt/.config  ./firmware/${{matrix.target}}.config
         cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
         cd firmware
-
-        echo "`git rev-parse HEAD`" >> ${{ env.VERSION }}-info-${{matrix.target}}.txt
-        rename -v "s/^openwrt/${{ env.VERSION }}-openwrt/" * || true
-        rename -v "s/friendlyarm_//" *gz || true
+        echo "`git rev-parse HEAD`" >> openwrt-${{matrix.target}}-info.txt
         
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
@@ -142,6 +139,11 @@ jobs:
       with:
           name: openwrt_release_firmware
           path: openwrt/firmware
+
+    - name: 改名
+      run: |
+        cd openwrt/firmware
+        rename -v "s/^openwrt/${{ env.VERSION }}-openwrt/" * || true
 
     - name: 生成发布文本
       id: tag
