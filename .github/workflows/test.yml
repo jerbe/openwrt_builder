@@ -36,12 +36,6 @@ jobs:
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.txt
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.bin
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.img
-        touch ${{ matrix.target }}.txt
-        ls -a
-        echo $PWD
-        cd ~
-        echo $PWD
-        ls -a
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         sleep `echo $RANDOM|cut -c 1,1|awk '{print $0"s"}'`
     - name: 上传固件到artifact
