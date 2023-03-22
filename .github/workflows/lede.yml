@@ -156,7 +156,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: openwrt/firmware/*
-        name: 发布测试数据
+        name: ${{ env.VERSION }} LEDE Of OpenWRT
         body_path: release.txt
         tag_name: ${{ env.VERSION }}_lede
         
