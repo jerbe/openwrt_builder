@@ -105,8 +105,8 @@ jobs:
       run: |
         mkdir firmware
         mv -f openwrt/bin/targets/*/*/{*.bin,*.img} ./firmware/ 2>/dev/null || true
-        cp openwrt/.config  ./firmware/${{matrix.target}}.config
-        cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
+        cp openwrt/.config  ./firmware/openwrt-${{matrix.target}}.config
+        cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/openwrt-${{matrix.target}}_kernel.config
         cd firmware
         echo "`git rev-parse HEAD`" >> openwrt-${{matrix.target}}-info.txt
         
@@ -131,6 +131,7 @@ jobs:
     steps:
     - name: 初始化环境
       run: |
+        sudo -E apt-get -qq install rename
         sudo timedatectl set-timezone "$TZ"
         echo "VERSION=$(date +'%Y%m.%d.%H%M')" >> $GITHUB_ENV
 
