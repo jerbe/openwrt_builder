@@ -102,7 +102,7 @@ jobs:
 
     - name: 整理文件
       id: organize
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      if: steps.compile.outputs.status == 'success'
       run: |
         mkdir firmware
         mv -f openwrt/bin/targets/*/*/{*.bin,*.img} ./firmware/ 2>/dev/null || true
@@ -119,7 +119,8 @@ jobs:
 
     - name: 打包上传固件
       id: upload_artifact
-      if: env.UPLOAD_RELEASE == 'true' && success()
+      if: (success())
+      uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
         path: ${{env.FIRMWARE}}
@@ -144,7 +145,7 @@ jobs:
 
     - name: 生成发布文本
       id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: (success())
       run: |
         echo -e "发布成功\n" >> release.txt
         touch release.txt
