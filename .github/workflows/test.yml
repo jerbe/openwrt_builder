@@ -31,36 +31,47 @@ jobs:
     steps:
     - name: 初始化环境
       run: |
+        mkdir firmware
+        cd firmware
         echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.txt
+        echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.bin
+        echo -e "${{ matrix.target }}" >> ${{ matrix.target }}.img
         touch ${{ matrix.target }}.txt
         ls -a
         echo $PWD
         cd ~
         echo $PWD
         ls -a
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         sleep `echo $RANDOM|cut -c 1,1|awk '{print $0"s"}'`
     - name: 上传固件到artifact
       uses: actions/upload-artifact@v3
       with:
         name: openwrt_release_firmware
-        path: ${{github.workspace}}/*.txt
+        path: ${{FIRMWARE}}
         if-no-files-found: error
 
   release_openwrt:
     runs-on: Ubuntu-20.04
     needs: build_openwrt
     if: ${{ success()}}
+    name: 发布到Release
     steps:
     - name: 下载 Artifact
       uses: actions/download-artifact@v3
       with:
           name: openwrt_release_firmware
           path: openwrt/firmware
+    - name: 生成发布信息
+      run: |
+        echo -e "发布成功\n" >> release.txt
+        touch release.txt
     - name: 发布Release
       uses: softprops/action-gh-release@v1
       with:
         files: openwrt/firmware/*
         name: 发布测试数据
         body_path: release.txt
+        tag_name: test_tag
 
         
