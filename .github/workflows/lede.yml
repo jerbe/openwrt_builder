@@ -27,7 +27,6 @@ jobs:
   buile_openwrt:
     runs-on: Ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id
-
     name: Build ${{matrix.target}}
     strategy:
       fail-fast: false
@@ -131,6 +130,7 @@ jobs:
     runs-on: Ubuntu-20.04
     needs: buile_openwrt
     if: (success())
+    name: 发布到Release
     steps:
     - name: 初始化环境
       run: |
