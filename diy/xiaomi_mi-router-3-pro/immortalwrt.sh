@@ -2,6 +2,8 @@
 #===============================================
 #1. Modify default IP
 sed -i 's/192.168.1.1/192.168.31.1/g' openwrt/package/base-files/files/bin/config_generate
+sed -i "s/hostname='OpenWrt'/hostname='J-Router'/g" openwrt/package/base-files/files/bin/config_generate
+sed -i "s/timezone='UTC'/timezone='CST-8'/g" package/base-files/files/bin/config_generate
 
 #2. 改默认WIFI SSID名
 sed -i 's/ssid=OpenWrt/ssid=D-WiFi/g' openwrt/package/kernel/mac80211/files/lib/wifi/mac80211.sh
