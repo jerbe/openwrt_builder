@@ -6,6 +6,7 @@
 ```
 	* xiaomi_redmi-router-ax6s (红米路由器AX6S)
 	* xiaomi_mi-router-3-pro (小米路由器PRO)
+	* xiaomi_mibox-3c (小米盒子3C)(测试中...)
 ```
 
 本项目构建器提供了一些基础设置,如主机名、WiFi名称、默认访问地址等
