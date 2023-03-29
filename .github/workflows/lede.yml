@@ -104,11 +104,11 @@ jobs:
       if: steps.compile.outputs.status == 'success'
       run: |
         mkdir firmware
-        mv -f openwrt/bin/targets/*/*/{*.bin,*.img} ./firmware/ 2>/dev/null || true
+        mv -f openwrt/bin/targets/*/*/* ./firmware/ 2>/dev/null || true
         cp openwrt/.config  ./firmware/${{matrix.target}}.config
         cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
         cd firmware
-        find ./ -regextype egrep  -regex ".*\.bin$|.*\.img$" -printf '%f\n'|xargs -I {} md5sum {} >> md5.txt
+        find ./ -regextype egrep  -regex ".*(?<!config)$" -printf '%f\n'|xargs -I {} md5sum {} >> md5.txt
         echo -e "repository version: `git rev-parse HEAD`\n" >> ${{matrix.target}}-info.txt
         echo -e '\n\n>>>>> MD5' >> ${{matrix.target}}-info.txt
         cat md5.txt >> ${{matrix.target}}-info.txt
