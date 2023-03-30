@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [xiaomi_redmi-router-ax6s,xiaomi_mi-router-3-pro,xiaomi_mibox-3c]
+        target: [xiaomi_redmi-router-ax6s,xiaomi_mi-router-3-pro,xiaomi_mibox-4]
     
     steps:
     - name: 检查
