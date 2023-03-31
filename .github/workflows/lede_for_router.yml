@@ -123,8 +123,8 @@ jobs:
       uses: ncipollo/release-action@main
       if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
       with:
-        tag: ${{ ${{ env.VERSION }}_router_lede }}
-        name: ${{ ${{ env.VERSION }} Router Firmwares Of OpenWrt.LEDE }}
+        tag: ${{ env.VERSION }}_router_lede
+        name: ${{ env.VERSION }} Router Firmwares Of OpenWrt.LEDE
         artifacts: ${{env.FIRMWARE}}/${{matrix.target}}.zip
         allowUpdates: true
         body: |

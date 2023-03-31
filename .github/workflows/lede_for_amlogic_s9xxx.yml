@@ -165,8 +165,8 @@ jobs:
       uses: ncipollo/release-action@main
       if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
       with:
-        tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
-        name: ${{ ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE }}
+        tag: ${{ env.VERSION }}_amlogic_s9xxx_lede
+        name: ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE
         artifacts: openwrt/bin/targets/*/*/*rootfs.tar.gz, firmware/${{matrix.target}}.config, firmware/${{matrix.target}}_kernel.config
         allowUpdates: true
         body: |
@@ -195,8 +195,8 @@ jobs:
       uses: ncipollo/release-action@main
       if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
       with:
-        tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
-        name: ${{ ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE }}
+        tag: ${{ env.VERSION }}_amlogic_s9xxx_lede
+        name: ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         body: |
