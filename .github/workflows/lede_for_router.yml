@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: lede
+name: 构建路由器固件
 
 on:
   repository_dispatch:
@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [xiaomi_redmi-router-ax6s,xiaomi_mi-router-3-pro,xiaomi_mibox-4]
+        target: [xiaomi_redmi-router-ax6s,xiaomi_mi-router-3-pro]
     
     steps:
     - name: 检查
@@ -92,7 +92,7 @@ jobs:
       working-directory: ./openwrt
       run: |
         echo -e "$(($(nproc)+1)) thread compile"
-        make -j$(($(nproc)+1)) || make -j1 V=s
+        make -j$(($(nproc)+1))  || make -j1 V=s
         echo "status=success" >> $GITHUB_OUTPUT
      
     - name: 检查空间使用情况
@@ -119,51 +119,29 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
-    - name: 打包上传固件
-      id: upload_artifact
-      if: (success())
-      uses: actions/upload-artifact@v3
+    - name: 发布已编译固件
+      uses: ncipollo/release-action@main
+      if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
       with:
-        name: openwrt_release_firmware
-        path: ${{env.FIRMWARE}}/${{matrix.target}}.zip
-        if-no-files-found: error
-        retention-days: 1
+        tag: ${{ ${{ env.VERSION }}_router_lede }}
+        name: ${{ ${{ env.VERSION }} Router Firmwares Of OpenWrt.LEDE }}
+        artifacts: ${{env.FIRMWARE}}/${{matrix.target}}.zip
+        allowUpdates: true
+        body: |
+          * Firmware information
+          * 固件信息
 
-  release_openwrt:
-    runs-on: Ubuntu-20.04
-    needs: buile_openwrt
-    if: (success())
-    name: 发布到Release
-    steps:
-    - name: 初始化环境
-      run: |
-        sudo -E apt-get -qq install rename
-        sudo timedatectl set-timezone "$TZ"
-        echo "VERSION=$(date +'%Y%m.%d.%H%M')" >> $GITHUB_ENV
+          Default IP: 192.168.31.1
+          默认IP: 192.168.31.1
 
-    - name: 下载 Artifact
-      uses: actions/download-artifact@v3
-      with:
-          name: openwrt_release_firmware
-          path: openwrt/firmware
+          Default username: root
+          默认账户: root
 
-    - name: 改名
-      run: |
-        cd openwrt/firmware
-        rename -v "s/^/${{ env.VERSION }}/" * || true
+          Default password: password
+          默认密码: password
 
-    - name: 生成发布文本
-      id: tag
-      if: (success())
-      run: |
-        echo -e "发布成功\n" >> release.txt
-        touch release.txt
+          Default WIFI name:  D-WiFi
+          默认WiFi名称: D-WiFi
 
-    - name: 发布
-      uses: softprops/action-gh-release@v1
-      with:
-        files: openwrt/firmware/*
-        name: ${{ env.VERSION }} LEDE Of OpenWRT
-        body_path: release.txt
-        tag_name: ${{ env.VERSION }}_lede
-        
+          Default WIFI password: none
+          默认WiFi密码: 无

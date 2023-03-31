@@ -1,0 +1,225 @@
+#=================================================
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: kenzo
+#=================================================
+
+name: 构建晶晨S9XXX固件
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      openwrt_board:
+        description: "Select device board"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - s922x_s905x3_s905d_s912_s905l3a
+          - r66s_r68s_h66k_h68k_e25_nanopi-r5s
+          - eaidk-610_king3399_tn3399_kylin3399
+          - vplus_tqc-a01_tanix-tx6
+          - a311d
+          - s922x
+          - s922x-reva
+          - s922x-ct2000
+          - s905x3
+          - s905x3-b
+          - s905x2
+          - s912
+          - s912-m8s-pro
+          - s905d
+          - s905d-ki-pro
+          - s905x
+          - s905w
+          - s905
+          - s905l2
+          - s905l3
+          - s905l3a
+          - s905l3b
+          - s905lb-r3300l
+          - rock5b
+          - h88k
+          - r66s
+          - r68s
+          - h66k
+          - h68k
+          - e25
+          - nanopi-r5s
+          - eaidk-610
+          - king3399
+          - tn3399
+          - kylin3399
+          - beikeyun
+          - l1pro
+          - vplus
+          - tqc-a01
+          - tanix-tx6
+      openwrt_kernel:
+        description: "Select kernel version"
+        required: false
+        default: "5.15.1_6.1.1"
+        type: choice
+        options:
+          - 5.4.1_5.10.1_5.15.1
+          - 5.4.1_5.10.1
+          - 5.10.1_5.15.1
+          - 5.15.1_6.1.1
+          - 5.4.1
+          - 5.10.1
+          - 5.15.1
+          - 6.1.1
+      auto_kernel:
+        description: "Auto use the latest kernel"
+        required: false
+        default: true
+        type: boolean
+      kernel_repo:
+        description: "Set the kernel repository"
+        required: false
+        default: "https://github.com/ophub/kernel/tree/main/pub"
+      openwrt_size:
+        description: "Set the rootfs size(Unit: MiB)"
+        required: false
+        default: "1024"
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  buile_openwrt:
+    runs-on: Ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+    name: 编译OpenWRT ${{matrix.target}}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [amlogic_s9xxx]
+    
+    steps:
+    - name: 检查
+      uses: actions/checkout@main
+
+    - name: 初始化环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        ( sudo -E apt-get -qq update
+        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc-s1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx-ucl libelf-dev autoconf automake libtool autopoint device-tree-compiler ccache xsltproc rename antlr3 gperf wget curl swig rsync zip
+        sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
+        sudo -E apt-get -qq purge azure-cli ghc* zulu* hhvm llvm* firefox powershell openjdk* dotnet* google* mysql* php* android*
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -y install $(curl -fsSL https://is.gd/depend_ubuntu2204_openwrt)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean ) &
+        sudo timedatectl set-timezone "$TZ"
+        
+    - name: 设置版本
+      id: set_version
+      run: |
+        echo "VERSION=$(date +'%Y%m.%d.%H%M')" >> $GITHUB_ENV
+
+    - name: 克隆源代码
+      env: 
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        cd openwrt
+        sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
+
+    - name: 更新 & 安装 feeds
+      working-directory: ./openwrt
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: 自定义配置 ${{matrix.target}}
+      env:
+        CONFIG_FILE: '${{matrix.target}}.config'
+      run: |
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        cp ./diy/${{ matrix.target }}/lede.sh ./diy.sh
+        chmod +x ./diy.sh && ./diy.sh
+        cp -f ./devices/${{matrix.target}}/lede.config openwrt/.config
+        cd openwrt
+        make defconfig
+        
+    - name: 下载包文件
+      working-directory: ./openwrt
+      run: |
+        make download -j$(nproc)
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: 编译固件
+      id: compile
+      working-directory: ./openwrt
+      run: |
+        echo -e "$(($(nproc)+1)) thread compile"
+        make -j$(($(nproc)+1))  || make -j1 V=s
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: 发布已编译固件
+      uses: ncipollo/release-action@main
+      if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
+      with:
+        tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
+        name: ${{ ${{ env.VERSION }} Amlogic S9xxx Firmwares Of OpenWrt.LEDE }}
+        artifacts: openwrt/bin/targets/*/*/*rootfs.tar.gz, firmware/${{matrix.target}}.config, firmware/${{matrix.target}}_kernel.config
+        allowUpdates: true
+        body: |
+          *rootfs.tar.gz 为编译好的固件,如果可以,你可以将他构建成其他可用镜像.
+
+    - name: 清理空间
+      if: (!cancelled())
+      run: |
+          cd openwrt/
+          rm -rf $(ls . | grep -v "^bin$" | xargs) 2>/dev/null
+          df -hT ${PWD}
+
+    - name: 构建固件
+      if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
+      uses: ophub/amlogic-s9xxx-openwrt@main
+      with:
+        openwrt_path: openwrt/bin/targets/*/*/*rootfs.tar.gz
+        openwrt_board: ${{ inputs.openwrt_board }}
+        openwrt_kernel: ${{ inputs.openwrt_kernel }}
+        auto_kernel: ${{ inputs.auto_kernel }}
+        kernel_repo: ${{ inputs.kernel_repo }}
+        openwrt_size: ${{ inputs.openwrt_size }}
+        gh_token: ${{ secrets.GH_TOKEN }}
+ 
+   - name: 发布已构建的固件
+      uses: ncipollo/release-action@main
+      if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
+      with:
+        tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
+        name: ${{ ${{ env.VERSION }} Amlogic S9xxx Firmwares Of OpenWrt.LEDE }}
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        allowUpdates: true
+        body: |
+          This is OpenWrt firmware for Amlogic and Rockchip
+          这是适用于Amlogic和Rockchip的OpenWrt固件
+
+          * Firmware information
+          * 固件信息
+
+          Default IP: 192.168.31.1
+          默认IP: 192.168.31.1
+
+          Default username: root
+          默认账户: root
+
+          Default password: password
+          默认密码: password
+
+          Default WIFI name:  D-WiFi
+          默认WiFi名称: D-WiFi
+
+          Default WIFI password: none
+          默认WiFi密码: 无
+
+          Install to EMMC: Login to OpenWrt → System → Amlogic Service → Install OpenWrt
+          安装到EMMC：登录到OpenWrt→ 系统→ Amlogic服务→ 安装OpenWrt
