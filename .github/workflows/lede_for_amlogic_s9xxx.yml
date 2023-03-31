@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: 构建晶晨S9XXX固件
+name: 构建晶晨s9xxx固件
 
 on:
   repository_dispatch:
@@ -92,7 +92,7 @@ jobs:
   buile_openwrt:
     runs-on: Ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id
-    name: 编译OpenWRT ${{matrix.target}}
+    name: 构建 ${{matrix.target}}
     strategy:
       fail-fast: false
       matrix:
@@ -166,7 +166,7 @@ jobs:
       if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
       with:
         tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
-        name: ${{ ${{ env.VERSION }} Amlogic S9xxx Firmwares Of OpenWrt.LEDE }}
+        name: ${{ ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE }}
         artifacts: openwrt/bin/targets/*/*/*rootfs.tar.gz, firmware/${{matrix.target}}.config, firmware/${{matrix.target}}_kernel.config
         allowUpdates: true
         body: |
@@ -196,7 +196,7 @@ jobs:
       if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
       with:
         tag: ${{ ${{ env.VERSION }}_amlogic_s9xxx_lede }}
-        name: ${{ ${{ env.VERSION }} Amlogic S9xxx Firmwares Of OpenWrt.LEDE }}
+        name: ${{ ${{ env.VERSION }} Amlogic s9xxx Firmwares Of OpenWrt.LEDE }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         body: |
