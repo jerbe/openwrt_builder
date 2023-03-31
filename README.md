@@ -1,4 +1,4 @@
-﻿# 一个OpenWRT的固件构建系统
+# 一个OpenWRT的固件构建系统
 ## A Firmware builder of OpenWRT
 
 
