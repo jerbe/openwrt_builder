@@ -191,7 +191,7 @@ jobs:
         openwrt_size: ${{ inputs.openwrt_size }}
         gh_token: ${{ secrets.GH_TOKEN }}
  
-   - name: 发布已构建的固件
+    - name: 发布已构建的固件
       uses: ncipollo/release-action@main
       if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
       with:
