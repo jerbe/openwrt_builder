@@ -84,7 +84,6 @@ on:
         description: "Set the rootfs size(Unit: MiB)"
         required: false
         default: "1024"
-
 env:
   TZ: Asia/Shanghai
 
@@ -189,7 +188,7 @@ jobs:
         auto_kernel: ${{ inputs.auto_kernel }}
         kernel_repo: ${{ inputs.kernel_repo }}
         openwrt_size: ${{ inputs.openwrt_size }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+#        gh_token: ${{ secrets.GH_TOKEN }}
  
     - name: 发布已构建的固件
       uses: ncipollo/release-action@main
