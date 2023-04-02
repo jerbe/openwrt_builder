@@ -22,7 +22,7 @@ sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/lean/mt/drivers/mt_wifi/files/mt7915.1.5G.dat
 
 # 添加对armvirt的自动内核支持
-sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/autocore/Makefile
+sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' openwrt/package/lean/autocore/Makefile
 
 # 修改发布版本号
-sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION='R$(date +%Y%m.%d.%H%M)'|g" package/lean/default-settings/files/zzz-default-settings
+sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION='R$(date +%Y%m.%d.%H%M)'|g" openwrt/package/lean/default-settings/files/zzz-default-settings
