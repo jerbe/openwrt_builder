@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: "[LEDE]-Amlogic s9xxx芯片设备固件"
+name: "[ImmortalWRT]-Amlogic s9xxx芯片设备固件"
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -121,7 +121,7 @@ jobs:
 
     - name: 克隆源代码
       env: 
-        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_URL: https://github.com/immortalwrt/immortalwrt
         REPO_BRANCH: master
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
@@ -139,9 +139,9 @@ jobs:
         CONFIG_FILE: '${{matrix.target}}.config'
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        cp ./diy/${{ matrix.target }}/lede.sh ./diy.sh
+        cp ./diy/${{ matrix.target }}/immortalwrt.sh ./diy.sh
         chmod +x ./diy.sh && ./diy.sh
-        cp -f ./devices/${{matrix.target}}/lede.config openwrt/.config
+        cp -f ./devices/${{matrix.target}}/immortalwrt.config openwrt/.config
         cd openwrt
         make defconfig
         
@@ -163,8 +163,8 @@ jobs:
       uses: ncipollo/release-action@main
       if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
       with:
-        tag: ${{ env.VERSION }}_amlogic_s9xxx_lede
-        name: "[LEDE] [${{ env.VERSION }}] Amlogic s9xxx Firmwares"
+        tag: ${{ env.VERSION }}_amlogic_s9xxx_immortalwrt
+        name: "[ImmortalWRT] [${{ env.VERSION }}] Amlogic s9xxx Firmwares"
         artifacts: openwrt/bin/targets/*/*/*rootfs.tar.gz, firmware/${{matrix.target}}.config, firmware/${{matrix.target}}_kernel.config
         allowUpdates: true
         body: |
@@ -193,8 +193,8 @@ jobs:
       uses: ncipollo/release-action@main
       if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
       with:
-        tag: ${{ env.VERSION }}_amlogic_s9xxx_lede
-        name: "[LEDE] [${{ env.VERSION }}] Amlogic s9xxx Firmwares"
+        tag: ${{ env.VERSION }}_amlogic_s9xxx_immortalwrt
+        name: "[ImmortalWRT] [${{ env.VERSION }}] Amlogic s9xxx Firmwares"
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         body: |
