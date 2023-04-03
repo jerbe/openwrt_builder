@@ -3,7 +3,7 @@
 # Description: Delete older releases and workflows runs
 #==========================================================================
 
-name: 删除比价旧的发布跟工作流
+name: 删除旧的发布跟工作流
 
 on:
   repository_dispatch:
