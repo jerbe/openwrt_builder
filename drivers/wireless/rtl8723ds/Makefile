@@ -66,11 +66,11 @@ define Build/Compile
 endef
 
 # 编译前操作
-LOCAL_SOURCE_PATH:= /home/jerbe/Work/github.com/jerbe/driver_rtl8723ds
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) $(LOCAL_SOURCE_PATH)/* $(PKG_BUILD_DIR)/
-endef
+#LOCAL_SOURCE_PATH:= /home/jerbe/Work/github.com/jerbe/driver_rtl8723ds
+#define Build/Prepare
+#	mkdir -p $(PKG_BUILD_DIR)
+#	$(CP) $(LOCAL_SOURCE_PATH)/* $(PKG_BUILD_DIR)/
+#endef
 
 
 $(eval $(call KernelPackage,rtl8723ds))
