@@ -80,7 +80,7 @@ env:
   TZ: America/New_York
 
 jobs:
-  执行:
+  delete:
     runs-on: ubuntu-22.04
     if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
