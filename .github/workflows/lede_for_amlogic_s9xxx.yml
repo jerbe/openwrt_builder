@@ -88,10 +88,10 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  buile_openwrt:
+  build_openwrt:
     runs-on: Ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id
-    name: 构建 ${{matrix.target}}
+    name: 构建 ${{matrix.target}}-${{inputs.openwrt_board}}-${{inputs.openwrt_kernel}}
     strategy:
       fail-fast: false
       matrix:
@@ -188,7 +188,7 @@ jobs:
         auto_kernel: ${{ inputs.auto_kernel }}
         kernel_repo: ${{ inputs.kernel_repo }}
         openwrt_size: ${{ inputs.openwrt_size }}
-#        gh_token: ${{ secrets.GH_TOKEN }}
+#        gh_token: ${{ github.token }}
  
     - name: 发布已构建的固件
       uses: ncipollo/release-action@main
