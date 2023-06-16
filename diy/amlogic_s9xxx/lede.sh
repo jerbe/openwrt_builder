@@ -30,6 +30,3 @@ sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION='R$(date +%Y%m.%d.%H%M)'|g" ope
 # 设置 etc/openwrt_release 
 echo "DISTRIB_SOURCECODE='lede'" >> openwrt/package/base-files/files/etc/openwrt_release
 
-# 复制驱动到内核中
-# 小米盒子4等
-cp -R ./drivers/wireless/rtl8723ds openwrt/package/kernel/

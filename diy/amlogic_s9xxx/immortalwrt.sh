@@ -14,7 +14,3 @@ sed -i 's/SSID1=OpenWrt_5G/SSID1=D-WiFi_5G/g' openwrt/package/kernel/mt-drivers/
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/kernel/mt-drivers/mt_wifi/files/mt7615.1.2G.dat
 sed -i 's/SSID1=OpenWrt/SSID1=D-WiFi/g' openwrt/package/kernel/mt-drivers/mt_wifi/files/mt7615.2G.dat
 
-
-# 复制驱动到内核中
-# 小米盒子4等
-cp -R ./drivers/wireless/rtl8723ds openwrt/package/kernel/
